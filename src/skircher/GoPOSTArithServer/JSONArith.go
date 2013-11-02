@@ -4,50 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	//"log"
 	"net/http"
 	"skircher/WikiArith"
 	"strings"
 )
 
-//func main() {
-//	http.Handle("/", http.FileServer(http.Dir("./static/")))
-//	http.HandleFunc("/arithmetic", doJSONArithmetic)
-//	//http.Handle("/static", )
-//	log.Fatal(http.ListenAndServe(":8081", nil))
-//}
-
 func serveSingle(pattern string, filename string) {
 	http.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, filename)
 	})
-}
-
-const homePage = `<!DOCTYPE html>
-<html>
-<head>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-</head>
-<body>
-    <form action="/arithmetic" id="postToGoHandler">
-    <input type="submit" value="Post" />
-    </form>
-    <div id="result"></div>
-<script>
-$("#postToGoHandler").submit(function(event) {
-    event.preventDefault();
-    $.post("/arithmetic", JSON.stringify({"Param1": "Value1"}),
-        function(data) {
-            $("#result").empty().append(data);
-        }
-    );
-});
-</script>
-</body>
-</html>`
-
-func home(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, homePage)
 }
 
 type ArithRequest struct {

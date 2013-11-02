@@ -1,0 +1,39 @@
+<head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+</head>
+<h1>Constructing {{.Title}}</h1>
+
+<!-- <form action="/save/{{.Title}}" method="POST"> -->
+<form action="/arithmetic" id="postToGoHandler" method="POST">
+<label>Arithmetic Type</label>
+<select id="ArithMethod">
+    <option value="addition">Add</option>
+    <option value="subtraction">Subtract</option>
+    <option value="multiplication">Multiply</option>	
+    <option value="division">Divide</option>
+</select>
+<p>
+Enter comma separated values to perform arithmetic on (i.e. 10, 12, -14.2)
+</p>
+<div><textarea id="ArithArgs" name="body" rows="1" cols="40">{{printf "%s" .Body}}</textarea></div>
+<p>
+
+</p>
+<div><input type="submit" value="Calculate"></div>
+</form>
+<label id="arithres"></label>
+<script>
+$("#postToGoHandler").submit(function(event) {
+    event.preventDefault();
+	var myReq = {
+		ArithMethod : $("#ArithMethod" ).val(),
+		ArithArgs : $("#ArithArgs" ).val()
+		}
+    $.post("/arithmetic", JSON.stringify(myReq),
+        function(data) {
+			$("#arithres").text(data.ArithMethod + " of " + data.ArithParsedArgs + " = " + data.ArithResult);
+		   //alert(data.ArithMethod + " of " + data.ArithParsedArgs + " = " + data.ArithResult );
+        }
+    );
+});
+</script>

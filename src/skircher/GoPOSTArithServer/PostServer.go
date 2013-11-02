@@ -3,24 +3,13 @@ package main
 import (
 	"fmt"
 	"html"
-	//"io/ioutil"
+	"html/template"
 	"log"
 	"net/http"
-	//"skircher/WikiArith"
-	//"time"
-	"html/template"
 )
 
 func someHandler(w http.ResponseWriter, r *http.Request) {
-	// read form value
-	//value := r.FormValue("value")
-	//if r.Method == "POST" {
-	//	// receive posted data
-	//	body, err := ioutil.ReadAll(r.Body)
-	//	fmt.Fprintf(w, "POST Answer %v! %v", body, err)
-	//} else {
-	//	fmt.Fprintf(w, "Non-POST %v!", value)
-	//}
+
 	switch r.Method {
 	case "GET":
 		// Serve the resource.
@@ -36,26 +25,20 @@ func someHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func editHandler(w http.ResponseWriter, r *http.Request) {
-	title := r.URL.Path[len("/edit/"):]
+func constructHandler(w http.ResponseWriter, r *http.Request) {
+	title := r.URL.Path[len("/construct/"):]
 	p, err := loadPage(title)
 	if err != nil {
 		p = &Page{Title: title}
 	}
-	renderTemplate(w, "edit", p)
-	//fmt.Fprintf(w, "<h1>Editing %s</h1>"+
-	//    "<form action=\"/save/%s\" method=\"POST\">"+
-	//    "<textarea name=\"body\">%s</textarea><br>"+
-	//    "<input type=\"submit\" value=\"Save\">"+
-	//    "</form>",
-	//    p.Title, p.Title, p.Body)
+	renderTemplate(w, "construct", p)
 }
 
 func openHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[len("/open/"):]
 	p, err := loadPage(title)
 	if err != nil {
-		http.Redirect(w, r, "/edit/"+title, http.StatusFound)
+		http.Redirect(w, r, "/construct/"+title, http.StatusFound)
 		return
 	}
 	renderTemplate(w, "open", p)
@@ -80,23 +63,9 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 func main() {
 	http.HandleFunc("/open/", openHandler)
-	http.HandleFunc("/edit/", editHandler)
+	http.HandleFunc("/construct/", constructHandler)
 	http.HandleFunc("/save/", saveHandler)
 	http.HandleFunc("/", indexHandler)
-	//http.Handle("/", http.FileServer(http.Dir("./static/")))
 	http.HandleFunc("/arithmetic", doJSONArithmeticPOST)
-	//http.Handle("/static", )
 	log.Fatal(http.ListenAndServe(":8081", nil))
-	//http.HandleFunc("/", handler)
-	//http.HandleFunc("/summing", someHandler)
-	////http.ListenAndServe(":8081", nil)
-	//s := &http.Server{
-	//	Addr:           ":8081",
-	//	Handler:        nil,
-	//	ReadTimeout:    10 * time.Second,
-	//	WriteTimeout:   10 * time.Second,
-	//	MaxHeaderBytes: 1 << 20,
-	//}
-	//init()
-	//log.Fatal(s.ListenAndServe())
 }
